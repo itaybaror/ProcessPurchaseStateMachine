@@ -1,0 +1,23 @@
+definition:
+  Comment: "State Machine for TransactionProcessor"
+  StartAt: ProcessTransaction
+  States:
+    ProcessTransaction:
+      Type: Choice
+      Choices:
+      - Variable: "$.TransactionType"
+        StringEquals: "PURCHASE"
+        Next: ProcessPurchase
+      - Variable: "$.TransactionType"
+        StringEquals: "REFUND"
+        Next: ProcessRefund
+    ProcessPurchase:
+      Type: Task
+      Resource:
+        Fn::GetAtt: [ProcessPurchase, Arn]
+      End: true
+    ProcessRefund:
+      Type: Task
+      Resource:
+        Fn::GetAtt: [ProcessRefund, Arn]
+      End: true

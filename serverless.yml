@@ -1,0 +1,35 @@
+service: ProcessPurchaseStateMachine
+
+
+provider:
+  name: aws
+  runtime: python3.8
+
+layers:
+  name: prm-${self:custom.stage}-layer
+  path: src/layers
+  compatibleRuntimes:
+    - python3.8
+  allowedAccounts:
+    - '*'
+
+functions:
+  ProcessPurchase:
+    handler: src/functions/ProcessPurchase/app.process_purchase
+
+  ProcessRefund:
+    handler: src/functions/ProcessRefund/app.process_refund
+
+
+stepFunctions:
+  stateMachines:
+    TransactionProcessor:
+      name: TransactionProcessor
+      definition: ${file(src/statemachine/TransactionProcessor.yml):definition}
+
+
+plugins:
+  - serverless-step-functions
+  - serverless-python-requirements
+  - serverless-pseudo-parameters
+  
